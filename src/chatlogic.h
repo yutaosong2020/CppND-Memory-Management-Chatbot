@@ -20,7 +20,7 @@ private:
     //std::vector<GraphNode *> _nodes;
     // ### added code ###
     std::vector<std::unique_ptr<GraphNode>> _nodes;
-    std::vector<GraphEdge *> _edges;
+    // std::vector<GraphEdge *> _edges; // disabled, no longer owned by chatlogic.
 
     ////
     //// EOF STUDENT CODE

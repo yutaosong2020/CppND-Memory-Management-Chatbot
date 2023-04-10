@@ -21,7 +21,7 @@ private:
 public:
     // constructor / desctructor
     GraphEdge(int id);
-
+    // no need to destructor? because it didnt own any objects?
     // getter / setter
     int GetID() { return _id; }
     void SetChildNode(GraphNode *childNode);

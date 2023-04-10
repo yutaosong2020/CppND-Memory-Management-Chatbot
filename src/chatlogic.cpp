@@ -42,12 +42,13 @@ ChatLogic::~ChatLogic()
         delete *it;
     }
     */
-    // delete all edges
+    // delete all edges, no longer needed:
+    /*
     for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
     {
         delete *it;
     }
-
+    */
     ////
     //// EOF STUDENT CODE
 }
@@ -212,18 +213,27 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                                 );
 
                             // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
+                            // GraphEdge *edge = new GraphEdge(id);
+                            std::unique_ptr<GraphEdge> edge = std::make_unique<GraphEdge>(id);
                             // updated to access the raw data with the getter 
                             edge->SetChildNode(childNode->get());
                             edge->SetParentNode(parentNode->get());
-                            _edges.push_back(edge);
-
-                            // find all keywords for current node
+                            // _edges.push_back(std::move(edge)); 
+                            /*
+                            ?? cant do this, will make the edge invalid. 
+                            when to add item to _edges?find all keywords 
+                            for current node.
+                            */
+                            
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge);
-                            (*parentNode)->AddEdgeToChildNode(edge);
+                            // knowledge point & question for deallocation:
+                            // beware, this might messed up the app here because .get() generate raw pointer,
+                            // the object will no logner be deallocated automatically when it goes out of scope.
+                            // not sure who manage the the pointers for parent node
+                            (*childNode)->AddEdgeToParentNode(edge.get()); 
+                            (*parentNode)->AddEdgeToChildNode(std::move(edge));
                         }
 
                         ////
