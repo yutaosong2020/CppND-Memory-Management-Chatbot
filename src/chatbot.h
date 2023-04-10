@@ -13,7 +13,7 @@ private:
     // data handles (owned)
     wxBitmap *_image; // avatar image
 
-    // data handles (not owned)
+    // data handles (not owned) // important here, both root node and chat logic are not owned by this object.
     GraphNode *_currentNode;
     GraphNode *_rootNode;
     ChatLogic *_chatLogic;

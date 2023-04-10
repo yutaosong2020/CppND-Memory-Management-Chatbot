@@ -35,12 +35,13 @@ ChatLogic::~ChatLogic()
     // delete chatbot instance
     delete _chatBot;
 
-    // delete all nodes
+    // delete all nodes, no longer needed with new smart pointer:
+    /*
     for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
     {
         delete *it;
     }
-
+    */
     // delete all edges
     for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
     {
@@ -127,12 +128,31 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                         ////
 
                         // check if node with this ID exists already
-                        auto newNode = std::find_if(_nodes.begin(), _nodes.end(), [&id](GraphNode *node) { return node->GetID() == id; });
+                        // updated to inline with smart pointer, knowledge points see line 159.
+                        auto newNode = std::find_if(
+                            _nodes.begin(), 
+                            _nodes.end(), 
+                            [&id](const std::unique_ptr<GraphNode> &node) { 
+                                return node->GetID() == id; 
+                                }
+                            );
 
                         // create new element if ID does not yet exist
                         if (newNode == _nodes.end())
                         {
-                            _nodes.emplace_back(new GraphNode(id));
+                            // _nodes.emplace_back(new GraphNode(id)); // original code
+                            _nodes.emplace_back(std::make_unique<GraphNode>(id)); 
+                            // ### Notes ###
+                            /*
+                            make_unique was introduced from c++14, You should use std::make_unique instead of using new directly because:
+                            1,It's exception-safe: std::make_unique guarantees that the memory allocated for the object is released 
+                            in case of an exception, while using new directly could lead to memory leaks if an exception is thrown 
+                            before the memory is properly deallocated.
+                            2,It's more concise: std::make_unique is shorter and more readable than using new directly.
+                            3,It avoids unnecessary code duplication: std::make_unique handles the memory allocation and object 
+                            construction in a single line of code, while using new directly requires separate lines of code for 
+                            memory allocation and object construction.
+                            */
                             newNode = _nodes.end() - 1; // get iterator to last element
 
                             // add all answers to current node
@@ -148,21 +168,54 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                     {
                         //// STUDENT CODE
                         ////
-
+                        // knowledge points:
+                        /*
+                        1, find_if syntax explain:
+                            find_if(start, end, lambda) - the last one can be the lambda expression or an method
+                        2, lambda expression used here in the code:
+                            a, lambda introducer: [ capture-list ] ( parameter-list ) -> return-type { body }
+                                add the variable into the [capture-list] can be used inside the lambda body
+                        */
                         // find tokens for incoming (parent) and outgoing (child) node
-                        auto parentToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "PARENT"; });
-                        auto childToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "CHILD"; });
+                        auto parentToken = std::find_if(
+                            tokens.begin(), 
+                            tokens.end(), 
+                            [](const std::pair<std::string, std::string> &pair) { 
+                                return pair.first == "PARENT"; 
+                                }
+                            );
+                        auto childToken = std::find_if(
+                            tokens.begin(), 
+                            tokens.end(), 
+                            [](const std::pair<std::string, std::string> &pair) { 
+                                return pair.first == "CHILD"; 
+                                }
+                            );
 
                         if (parentToken != tokens.end() && childToken != tokens.end())
                         {
                             // get iterator on incoming and outgoing node via ID search
-                            auto parentNode = std::find_if(_nodes.begin(), _nodes.end(), [&parentToken](GraphNode *node) { return node->GetID() == std::stoi(parentToken->second); });
-                            auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](GraphNode *node) { return node->GetID() == std::stoi(childToken->second); });
+                            // two updates here with the new smart pointer:
+                            auto parentNode = std::find_if(
+                                _nodes.begin(), 
+                                _nodes.end(), 
+                                [&parentToken](const std::unique_ptr<GraphNode> &node) {
+                                    return node->GetID() == std::stoi(parentToken->second); 
+                                    }
+                                );
+                            auto childNode = std::find_if(
+                                _nodes.begin(), 
+                                _nodes.end(), 
+                                [&childToken](const std::unique_ptr<GraphNode> &node) {
+                                    return node->GetID() == std::stoi(childToken->second); 
+                                    }
+                                );
 
                             // create new edge
                             GraphEdge *edge = new GraphEdge(id);
-                            edge->SetChildNode(*childNode);
-                            edge->SetParentNode(*parentNode);
+                            // updated to access the raw data with the getter 
+                            edge->SetChildNode(childNode->get());
+                            edge->SetParentNode(parentNode->get());
                             _edges.push_back(edge);
 
                             // find all keywords for current node
@@ -206,7 +259,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
 
             if (rootNode == nullptr)
             {
-                rootNode = *it; // assign current node to root
+                rootNode = it->get(); // assign current node to root, using getter
             }
             else
             {

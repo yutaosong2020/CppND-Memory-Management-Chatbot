@@ -45,7 +45,7 @@ ChatBot::~ChatBot()
 //// STUDENT CODE
 ////
 
-// only copy the pointer address here?
+// only copy the pointer address for chat logic and root node, they are not owned by the chatbot object.
 // copy constructor
 ChatBot::ChatBot(const ChatBot &chatBot)
 {  
