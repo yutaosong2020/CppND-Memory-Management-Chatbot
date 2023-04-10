@@ -1,0 +1,10 @@
+{
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/include",
+        "/usr/local/lib/wx/include/osx_cocoa-unicode-3.2",
+        "/usr/local/include/wx-3.2"
+    ]
+
+}
