@@ -33,9 +33,7 @@ public:
     1, copy constructor
     2, copy assignment
     3, destructor
-    */
-
-    /*
+    #####################
     1, copy constructor
     2, copy assignment
     3, move constructor
@@ -48,13 +46,27 @@ public:
     ////
     //#### added ####//
     // copy constructor
-
+    ChatBot(const ChatBot &chatBot);
     // copy assignment
-
+    ChatBot &operator=(const ChatBot &chatBot);
     // move constructor
+    /*
+    knowledge key points:
+    1, pvalue(rvalue) & lvalue
+        lvalue has an address that can be accessed.
+        pvalue is temporary expression, used for initialise and compute.
+        example: int i=42;  lvalue = pvalue, lvalue as named container as rvalues.
 
+    2, rvalue reference with && to store and reference rvalue since c++ 11
+        int i = 1;
+        int j = 2;
+        int k = i + j;
+        int &&l = i + j;
+        &&l is more efficient than k
+    */
+    ChatBot(ChatBot &&chatBot);
     // move assignment
-
+    ChatBot &operator=(ChatBot &&chatBot);
     ////
     //// EOF STUDENT CODE
 

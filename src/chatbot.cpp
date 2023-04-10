@@ -45,6 +45,62 @@ ChatBot::~ChatBot()
 //// STUDENT CODE
 ////
 
+// only copy the pointer address here?
+// copy constructor
+ChatBot::ChatBot(const ChatBot &chatBot)
+{  
+    _chatLogic = chatBot._chatLogic;
+    _rootNode = chatBot._rootNode;
+    _image = new wxBitmap(*chatBot._image);
+    std::cout << "copy constructor" << std::endl;
+}
+// copy assignment constructor
+ChatBot &ChatBot::operator=(const ChatBot &chatBot)
+{
+    if(this != &chatBot)
+    {
+        _chatLogic = chatBot._chatLogic;
+        _rootNode = chatBot._rootNode;
+        if(_image)
+        {
+            delete _image;
+        }
+        _image = new wxBitmap(*chatBot._image);
+    }
+    std::cout << "copy assignment constructor" << std::endl;
+    return *this;
+}
+// move constructor
+ChatBot::ChatBot(ChatBot &&chatBot)
+{
+    _chatLogic = chatBot._chatLogic;
+    _rootNode = chatBot._rootNode;
+    _image = chatBot._image;
+    chatBot._chatLogic = nullptr;
+    chatBot._rootNode = nullptr;
+    chatBot._image = nullptr;
+    std::cout << "move constructor" << std::endl;
+}
+// move assignment constructor
+ChatBot &ChatBot::operator=(ChatBot &&chatBot)
+{
+    if(this != &chatBot)
+    {
+        if(_image)
+        {
+            delete _image;
+        }
+        _chatLogic = chatBot._chatLogic;
+        _rootNode = chatBot._rootNode;
+        _image = chatBot._image;
+        chatBot._chatLogic = nullptr;
+        chatBot._rootNode = nullptr;
+        chatBot._image = nullptr;
+    }
+    std::cout << "move constructor" << std::endl;
+    return *this;
+}
+
 ////
 //// EOF STUDENT CODE
 
