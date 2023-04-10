@@ -27,8 +27,33 @@ public:
     ChatBot(std::string filename); // constructor WITH memory allocation
     ~ChatBot();
 
+    // ### Rule of 3 / rule of 5: ###
+
+    /*
+    1, copy constructor
+    2, copy assignment
+    3, destructor
+    */
+
+    /*
+    1, copy constructor
+    2, copy assignment
+    3, move constructor
+    4, move assignment
+    5, destructor
+    */
+
+
     //// STUDENT CODE
     ////
+    //#### added ####//
+    // copy constructor
+
+    // copy assignment
+
+    // move constructor
+
+    // move assignment
 
     ////
     //// EOF STUDENT CODE
