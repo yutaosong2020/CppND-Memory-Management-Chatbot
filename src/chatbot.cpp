@@ -15,6 +15,7 @@ ChatBot::ChatBot()
     _image = nullptr;
     _chatLogic = nullptr;
     _rootNode = nullptr;
+    //std::cout << "ChatBot Constructor" << std::endl;
 }
 
 // constructor WITH memory allocation
@@ -52,7 +53,7 @@ ChatBot::ChatBot(const ChatBot &chatBot)
     _chatLogic = chatBot._chatLogic;
     _rootNode = chatBot._rootNode;
     _image = new wxBitmap(*chatBot._image);
-    std::cout << "copy constructor" << std::endl;
+    std::cout << "ChatBot Copy Constructor" << std::endl;
 }
 // copy assignment constructor
 ChatBot &ChatBot::operator=(const ChatBot &chatBot)
@@ -67,7 +68,7 @@ ChatBot &ChatBot::operator=(const ChatBot &chatBot)
         }
         _image = new wxBitmap(*chatBot._image);
     }
-    std::cout << "copy assignment constructor" << std::endl;
+    std::cout << "ChatBot Copy Assignment Constructor" << std::endl;
     return *this;
 }
 // move constructor
@@ -79,7 +80,7 @@ ChatBot::ChatBot(ChatBot &&chatBot)
     chatBot._chatLogic = nullptr;
     chatBot._rootNode = nullptr;
     chatBot._image = nullptr;
-    std::cout << "move constructor" << std::endl;
+    std::cout << "ChatBot Move Constructor" << std::endl;
 }
 // move assignment constructor
 ChatBot &ChatBot::operator=(ChatBot &&chatBot)
@@ -97,7 +98,7 @@ ChatBot &ChatBot::operator=(ChatBot &&chatBot)
         chatBot._rootNode = nullptr;
         chatBot._image = nullptr;
     }
-    std::cout << "move constructor" << std::endl;
+    std::cout << "ChatBot Move Assignment Constructor" << std::endl;
     return *this;
 }
 
@@ -149,6 +150,8 @@ void ChatBot::SetCurrentNode(GraphNode *node)
     std::uniform_int_distribution<int> dis(0, answers.size() - 1);
     std::string answer = answers.at(dis(generator));
 
+    // update chatlogic
+    _chatLogic->SetChatbotHandle(this);
     // send selected node answer to user
     _chatLogic->SendMessageToUser(answer);
 }
